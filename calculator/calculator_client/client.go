@@ -17,7 +17,7 @@ func main()  {
 	defer conn.Close()
 	c:=calculatorpb.NewCalculatorServiceClient(conn)
 	//fmt.Println("created client ",c)
-	doUnary(c)
+	doServerStreaming(c)
 
 }
 
@@ -32,6 +32,34 @@ func doUnary(c calculatorpb.CalculatorServiceClient)  {
 		fmt.Println("errror sending request")
 	}
 	fmt.Println("SUCCESS SENDING REQUEST",res)
+
+
+
+}
+
+func doServerStreaming(c calculatorpb.CalculatorServiceClient)  {
+	fmt.Println("started Server streaming  gRPC ")
+	req:=&calculatorpb.PrimeNumberDecompositionRequest{
+		Number: 132135163444,
+	}
+	res, err := c.PrimeNumberDecomposition(context.Background(), req)
+	if err!=nil {
+		fmt.Println("errror sending request")
+	}
+	fmt.Println("SUCCESS SENDING REQUEST",res)
+
+	for{
+		msg , err :=res.Recv()
+		if err!=nil{
+			println("errro getting msg")
+			break
+		}
+
+		fmt.Println("getting message ",		msg.GetPrimefactor())
+
+
+	}
+
 
 
 

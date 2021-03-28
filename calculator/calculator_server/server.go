@@ -33,6 +33,27 @@ func (*server)Sum(ctx context.Context, req *calculatorpb.SumRequest) (*calculato
 
 }
 
+func (*server)PrimeNumberDecomposition( req *calculatorpb.PrimeNumberDecompositionRequest, stream calculatorpb.CalculatorService_PrimeNumberDecompositionServer) error{
+	fmt.Println("PrimeNumberDecomposition function was invoked",req)
+	number:= req.GetNumber()
+	divisor:=int64(2)
+
+	for number >1 {
+		if number%divisor ==0{
+			stream.Send(&calculatorpb.PrimeNumberDecompositionResponse{
+				Primefactor: divisor,
+			})
+			number = number/divisor
+
+		} else {
+			divisor++
+			fmt.Println("divisor has increased to ",divisor)
+					}
+	}
+
+return nil
+
+}
 
 func main()  {
 	fmt.Println("heyy")

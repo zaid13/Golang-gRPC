@@ -17,7 +17,7 @@ func main()  {
 	defer conn.Close()
 	c:=greetpb.NewGreetServiceClient(conn)
 	//fmt.Println("created client ",c)
-	doUnary(c)
+	doServerStreaming(c)
 
 }
 
@@ -35,7 +35,30 @@ fmt.Println("started unary gRPC ")
 		fmt.Println("errror sending request")
 	}
 	fmt.Println("SUCCESS SENDING REQUEST",res)
+}
 
 
+func doServerStreaming(c greetpb.GreetServiceClient)  {
+	fmt.Println("started ServerStreaming streaming gRPC ")
+	req:=&greetpb.GreetManytimesRequest{
+		Greeting: &greetpb.Greeting{
+			FirstName: "zaid ",
+			LastName:  "saeed",
+		},
+
+	}
+	StreamRes, err := c.GreetManytimes(context.Background(), req)
+	if err!=nil {
+		fmt.Println("errror sending GreetManytimes")
+	}
+	for{
+		msg, err :=StreamRes.Recv()
+		if err!=nil{
+			fmt.Println("errror while reading  messsage GreetManytimes")
+			break
+
+		}
+		fmt.Println("SUCCESS SENDING REQUEST",msg.GetResult())
+	}
 
 }
